@@ -4,12 +4,9 @@ namespace Validation\Schema;
 
 use Validation\Assertions;
 use Validation\InputValue;
-use Validation\Processor;
-use Validation\ValidationException;
-use Validation\Visitable;
-use Validation\Visitor;
+use Validation\Utils;
 
-abstract class AbstractSchema implements Visitable
+abstract class AbstractSchema
 {
     /**
      * @var Assertions\AbstractAssertion[]
@@ -27,18 +24,11 @@ abstract class AbstractSchema implements Visitable
     /**
      * @param InputValue $input
      * @return mixed
-     * @throws ValidationException
      */
     public function process(InputValue $input)
     {
-        $processor = new Processor($input);
-
-        $this->accept($processor);
-
-        if ($processor->hasErrors()) {
-            $exception = new ValidationException($processor->getErrorMessage());
-            $exception->setErrors($processor->getErrors());
-            throw $exception;
+        foreach ($this->assertions() as $assertion) {
+            $assertion->process($input);
         }
 
         return $input->getValue();
@@ -76,15 +66,5 @@ abstract class AbstractSchema implements Visitable
     public function getOption($name)
     {
         return $this->options[$name];
-    }
-
-    /**
-     * @param Visitor $visitor
-     */
-    public function accept(Visitor $visitor)
-    {
-        foreach ($this->assertions() as $assertion) {
-            $assertion->accept($visitor);
-        }
     }
 }
