@@ -6,10 +6,8 @@ use Validation\InputValue;
 use Validation\Schema\AbstractSchema;
 use Validation\Validation as V;
 use Validation\ValidationException;
-use Validation\Visitable;
-use Validation\Visitor;
 
-abstract class AbstractAssertion implements Visitable
+abstract class AbstractAssertion
 {
     /**
      * @var array
@@ -60,14 +58,6 @@ abstract class AbstractAssertion implements Visitable
     protected function getOptionsSchema()
     {
         return null;
-    }
-
-    /**
-     * @param Visitor $visitor
-     */
-    public function accept(Visitor $visitor)
-    {
-        $visitor->visit($this);
     }
 
     /**
